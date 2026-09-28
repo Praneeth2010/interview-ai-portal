@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InterviewAI Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0e14;
+      --card-bg: #131822;
+      --card-border: #1e2633;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --accent: #3b82f6;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #ffffff;
+      --text-muted: #94a3b8;
+      --text-sub: #cbd5e1;
+      --sidebar-w: 260px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; overflow-x: hidden; }
+
+    /* Sidebar */
+    aside {
+      width: var(--sidebar-w);
+      background: #0f131a;
+      border-right: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      position: fixed;
+      left: 0; top: 0; z-index: 100;
+      padding: 24px 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding-left: 6px; }
+    .brand-icon { width: 44px; height: 44px; border-radius: 12px; background: linear-gradient(135deg, #2563eb, #7c3aed); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .brand-title { font-size: 19px; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+    .brand-sub { font-size: 9px; font-weight: 700; color: var(--text-muted); letter-spacing: 1.5px; text-transform: uppercase; }
+
+    .nav-heading { font-size: 10px; font-weight: 800; letter-spacing: 1.4px; color: #64748b; margin: 18px 0 8px 8px; text-transform: uppercase; }
+    .nav-btn {
+      width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      border-radius: 10px; background: transparent; border: none; color: var(--text-muted);
+      font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.18s ease; text-align: left;
+    }
+    .nav-btn:hover { background: #161c28; color: #fff; }
+    .nav-btn.active { background: #1d283a; color: #60a5fa; font-weight: 700; border-left: 3px solid #3b82f6; }
+    .nav-icon { font-size: 18px; width: 22px; text-align: center; }
+
+    .sidebar-footer { margin-top: auto; padding-top: 18px; border-top: 1px solid #1a2230; font-size: 12px; }
+    .sys-status { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 12px; font-weight: 600; padding: 8px 10px; background: #141923; border-radius: 8px; border: 1px solid #1f2737; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; box-shadow: 0 0 8px var(--green); }
+
+    /* Main Area */
+    main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; padding: 32px 40px 60px; max-width: 1200px; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; padding-bottom: 20px; border-bottom: 1px solid var(--card-border); }
+    .top-title { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+    .top-sub { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+    /* Cards & Layout */
+    .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 14px; padding: 22px; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+    /* Forms & Inputs */
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 6px; }
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%; background: #0c1017; border: 1px solid #232d3d; border-radius: 10px;
+      color: #fff; padding: 12px 14px; font-size: 14px; outline: none; transition: border-color 0.15s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+    textarea { resize: vertical; min-height: 120px; font-family: monospace; font-size: 13px; line-height: 1.5; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 11px 20px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.18s ease; text-decoration: none;
+    }
+    .btn-primary { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #fff; box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
+    .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .btn-secondary { background: #1e2638; color: #cbd5e1; border-color: #2b3547; }
+    .btn-secondary:hover { background: #263147; color: #fff; }
+    .btn-success { background: #059669; color: #fff; }
+    .btn-success:hover { background: #047857; }
+    .btn-sm { padding: 7px 12px; font-size: 12px; border-radius: 8px; }
+    .btn-block { width: 100%; }
+
+    /* Badges & Tags */
+    .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+    .badge-green { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-blue { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-yellow { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    /* Drop Zone */
+    .dropzone {
+      border: 2px dashed #2b3648; border-radius: 12px; padding: 32px 20px; text-align: center;
+      background: #0f141d; cursor: pointer; transition: all 0.2s;
+    }
+    .dropzone:hover { border-color: var(--accent); background: #131a26; }
+    .drop-icon { font-size: 34px; margin-bottom: 8px; }
+
+    /* Question Card */
+    .question-box {
+      background: linear-gradient(135deg, #161f2e, #131822);
+      border: 1px solid #29384d; border-radius: 12px; padding: 22px; margin-bottom: 16px;
+    }
+    .question-num { font-size: 11px; font-weight: 800; color: #60a5fa; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; }
+    .question-text { font-size: 18px; font-weight: 700; color: #fff; line-height: 1.45; }
+
+    /* Progress bar */
+    .progress-track { width: 100%; height: 8px; background: #1a2230; border-radius: 99px; overflow: hidden; margin-bottom: 16px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 99px; transition: width 0.3s ease; }
+
+    /* Alerts */
+    .alert { padding: 14px 18px; border-radius: 10px; font-size: 13px; line-height: 1.5; margin-bottom: 16px; }
+    .alert-info { background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #93c5fd; }
+    .alert-success { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+    .alert-warning { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fde047; }
+
+    /* Loading Spinner */
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* View containers */
+    .view-panel { display: none; }
+    .view-panel.active { display: block; animation: fadeIn 0.2s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 900px) {
+      aside { width: 70px; padding: 18px 8px; }
+      .brand-title, .brand-sub, .nav-text, .nav-heading, .sidebar-footer { display: none; }
+      main { margin-left: 70px; padding: 20px; }
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside>
+    <div class="brand">
+      <div class="brand-icon">🎯</div>
+      <div>
+        <div class="brand-title">InterviewAI</div>
+        <div class="brand-sub">Agentic AI Portal</div>
+      </div>
+    </div>
+
+    <div class="nav-heading">Main Menu</div>
+    <button class="nav-btn active" onclick="switchTab('dashboard')"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></button>
+    <button class="nav-btn" onclick="switchTab('resume')"><span class="nav-icon">📄</span><span class="nav-text">Resume & ATS</span></button>
+    <button class="nav-btn" onclick="switchTab('interview')"><span class="nav-icon">🎙️</span><span class="nav-text">Interview Setup</span></button>
+    <button class="nav-btn" onclick="switchTab('jobs')"><span class="nav-icon">💼</span><span class="nav-text">Job Applications</span></button>
+    <button class="nav-btn" onclick="switchTab('report')"><span class="nav-icon">📈</span><span class="nav-text">Final Report</span></button>
+
+    <div class="sidebar-footer">
+      <div class="sys-status">
+        <span class="dot"></span>
+        <span id="sysStatusText">Gemini Connected</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+
+    <!-- Topbar -->
+    <header>
+      <div>
+        <h1 class="top-title" id="pageTitle">Dashboard</h1>
+        <p class="top-sub" id="pageSub">Your AI-powered interview preparation & career workspace</p>
+      </div>
+      <div id="headerActions"></div>
+    </header>
+
+    <!-- 1. DASHBOARD TAB -->
+    <section id="tab-dashboard" class="view-panel active">
+      <div class="card" style="background: linear-gradient(135deg, #111a2e, #131822); border-color: #25334d; padding: 30px;">
+        <span class="badge badge-blue" style="margin-bottom: 10px;">AGENTIC AI INTERVIEW ASSISTANT</span>
+        <h2 style="font-size: 28px; font-weight: 800; margin-bottom: 8px;">Prepare Smarter. Interview with Confidence.</h2>
+        <p style="color: var(--text-sub); max-width: 650px; font-size: 14px; line-height: 1.6;">
+          InterviewAI analyzes your resume, evaluates ATS compatibility, detects suitable job roles, curates real-time job openings from Google & LinkedIn, and trains you with an interactive voice mock interviewer.
+        </p>
+      </div>
+
+      <div class="grid-4" style="margin-bottom: 24px;">
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 800; color: #34d399;" id="dashAtsScore">0%</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px;">ATS SCORE</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 800; color: #60a5fa;" id="dashQuestionsCount">0</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px;">QUESTIONS</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 800; color: #a78bfa;" id="dashAnswersCount">0</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px;">ANSWERS</div>
+        </div>
+        <div class="card" style="text-align: center;">
+          <div style="font-size: 32px; font-weight: 800; color: #f59e0b;" id="dashOverallScore">0%</div>
+          <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); letter-spacing: 1px;">INTERVIEW SCORE</div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card" onclick="switchTab('resume')" style="cursor: pointer;">
+          <div style="font-size: 26px; margin-bottom: 10px;">📄</div>
+          <h3 style="font-size: 16px; margin-bottom: 6px;">Resume & ATS Analysis</h3>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Check keyword match, score, and optimize your resume for target positions.</p>
+        </div>
+        <div class="card" onclick="switchTab('interview')" style="cursor: pointer;">
+          <div style="font-size: 26px; margin-bottom: 10px;">🎙️</div>
+          <h3 style="font-size: 16px; margin-bottom: 6px;">AI Mock Interview</h3>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Detect suitable roles, generate custom questions, and practice with real-time speech feedback.</p>
+        </div>
+        <div class="card" onclick="switchTab('jobs')" style="cursor: pointer;">
+          <div style="font-size: 26px; margin-bottom: 10px;">💼</div>
+          <h3 style="font-size: 16px; margin-bottom: 6px;">Job Applications</h3>
+          <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">Curate matching openings from Google Jobs & LinkedIn with 1-click apply links.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. RESUME & ATS TAB -->
+    <section id="tab-resume" class="view-panel">
+      <div class="card">
+        <h3 style="font-size: 18px; margin-bottom: 14px;">📄 Upload Your Resume</h3>
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+          <div class="drop-icon">📤</div>
+          <p style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">Click or Drag & Drop Resume Here</p>
+          <p style="font-size: 12px; color: var(--text-muted);">Supports PDF, DOCX, or TXT</p>
+          <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display: none;" onchange="handleFileUpload(event)">
+        </div>
+        <div id="fileUploadStatus" style="margin-top: 12px;"></div>
+      </div>
+
+      <div id="resumeDetailsSection" style="display: none;">
+        <div class="card">
+          <div class="form-group">
+            <label>Extracted Resume Content</label>
+            <textarea id="resumeTextDisplay" rows="6" placeholder="Your resume text will appear here..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Target Job Description (for ATS Scoring & Optimization)</label>
+            <textarea id="jobDescInput" rows="5" placeholder="Paste the job description you want to apply for..."></textarea>
+          </div>
+          <button class="btn btn-primary" id="btnAnalyzeATS" onclick="analyzeATS()">
+            <span>⚡ Analyze ATS Score</span>
+          </button>
+        </div>
+
+        <!-- ATS Results -->
+        <div id="atsResultsCard" class="card" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+              <h3 style="font-size: 20px; font-weight: 800;">ATS Analysis Results</h3>
+              <p style="font-size: 13px; color: var(--text-muted);" id="atsSummary"></p>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 38px; font-weight: 900; color: #10b981;" id="atsScoreValue">0%</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">MATCH SCORE</div>
+            </div>
+          </div>
+
+          <div class="grid-4" style="margin-bottom: 20px;">
+            <div class="card" style="padding: 12px; text-align: center;"><div style="font-size: 18px; font-weight: 700;" id="mKeywords">0%</div><div style="font-size: 11px; color: var(--text-muted);">Keywords</div></div>
+            <div class="card" style="padding: 12px; text-align: center;"><div style="font-size: 18px; font-weight: 700;" id="mSkills">0%</div><div style="font-size: 11px; color: var(--text-muted);">Skills</div></div>
+            <div class="card" style="padding: 12px; text-align: center;"><div style="font-size: 18px; font-weight: 700;" id="mExp">0%</div><div style="font-size: 11px; color: var(--text-muted);">Experience</div></div>
+            <div class="card" style="padding: 12px; text-align: center;"><div style="font-size: 18px; font-weight: 700;" id="mFormat">0%</div><div style="font-size: 11px; color: var(--text-muted);">Formatting</div></div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <h4 style="font-size: 14px; color: #34d399; margin-bottom: 8px;">✓ Strengths</h4>
+              <div id="atsStrengths"></div>
+            </div>
+            <div>
+              <h4 style="font-size: 14px; color: #f87171; margin-bottom: 8px;">⚠ Missing Keywords</h4>
+              <div id="atsMissing"></div>
+            </div>
+          </div>
+
+          <hr style="border-color: var(--card-border); margin: 24px 0;">
+          <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 8px;">✨ Auto Adjust Resume</h3>
+          <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 14px;">Rewrites and optimizes your resume wording, action verbs, and ATS keywords to match the target job description.</p>
+          <button class="btn btn-primary" id="btnOptimizeResume" onclick="optimizeResume()">✨ Auto Adjust Resume</button>
+
+          <div id="optimizedResumeSection" style="margin-top: 18px; display: none;">
+            <label>Optimized Resume Text</label>
+            <textarea id="optimizedResumeText" rows="10"></textarea>
+            <div style="margin-top: 10px;">
+              <button class="btn btn-secondary btn-sm" onclick="downloadOptimizedResume()">📥 Download Optimized Resume (.txt)</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. INTERVIEW SETUP TAB -->
+    <section id="tab-interview" class="view-panel">
+      <!-- SETUP MODE -->
+      <div id="interviewSetupView">
+        <div id="suitableRolesBox" style="display: none;"></div>
+
+        <div class="card">
+          <h3 style="font-size: 18px; margin-bottom: 16px;">Configure Your AI Interview</h3>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Candidate Name</label>
+              <input type="text" id="candidateNameInput" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+              <label>Target Role</label>
+              <input type="text" id="targetRoleInput" placeholder="e.g. Backend Developer">
+            </div>
+            <div class="form-group">
+              <label>Experience Level</label>
+              <select id="expLevelSelect">
+                <option value="Fresher">Fresher / Entry Level</option>
+                <option value="0-1 Years">0-1 Years</option>
+                <option value="1-3 Years">1-3 Years</option>
+                <option value="3-5 Years">3-5 Years</option>
+                <option value="5+ Years">5+ Years</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Interview Type</label>
+              <select id="interviewTypeSelect">
+                <option value="Technical">Technical</option>
+                <option value="HR">HR</option>
+                <option value="Technical + HR">Technical + HR</option>
+                <option value="Behavioral">Behavioral</option>
+                <option value="Project Based">Project Based</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Difficulty</label>
+              <select id="difficultySelect">
+                <option value="Easy">Easy</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="Hard">Hard</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Number of Questions</label>
+              <input type="number" id="numQuestionsInput" min="1" max="25" value="5">
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 14px; margin-top: 10px;">
+            <button class="btn btn-secondary" onclick="generateQuestionsOnly()">Generate Interview Questions</button>
+            <button class="btn btn-primary" onclick="startInterviewNow()">🚀 Start Interview</button>
+          </div>
+        </div>
+
+        <div id="questionsPreviewList"></div>
+      </div>
+
+      <!-- IN-INTERVIEW ACTIVE PRACTICE MODE -->
+      <div id="interviewPracticeView" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2 style="font-size: 22px; font-weight: 800;">🎙️ Active AI Interview</h2>
+          <button class="btn btn-secondary btn-sm" onclick="exitInterviewToSetup()">⚙️ Back to Setup</button>
+        </div>
+
+        <div class="progress-track"><div class="progress-fill" id="interviewProgressBar" style="width: 20%;"></div></div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;" id="questionCounter">Question 1 of 5</p>
+
+        <!-- Question Box -->
+        <div class="question-box">
+          <div class="question-num" id="currentQuestionNum">QUESTION 1 • TECHNICAL</div>
+          <div class="question-text" id="currentQuestionText">Loading question...</div>
+          <div style="margin-top: 12px; display: flex; align-items: center; gap: 10px;">
+            <button class="btn btn-secondary btn-sm" onclick="speakCurrentQuestion()">🔊 Listen to Question</button>
+            <span id="speechIndicator" style="font-size: 12px; color: #60a5fa;"></span>
+          </div>
+        </div>
+
+        <!-- Answer Area -->
+        <div class="card">
+          <label>Your Answer</label>
+          <textarea id="candidateAnswerText" rows="6" placeholder="Type your answer here or record with your microphone below..."></textarea>
+
+          <div style="margin-top: 14px; display: flex; align-items: center; gap: 12px;">
+            <button class="btn btn-secondary btn-sm" id="btnRecordVoice" onclick="toggleVoiceRecording()">🎤 Record Voice Answer</button>
+            <span id="recStatus" style="font-size: 12px; color: var(--text-muted);"></span>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 20px;">
+            <button class="btn btn-secondary" id="btnPrevQ" onclick="prevQuestion()" disabled>⬅ Previous</button>
+            <button class="btn btn-primary" id="btnEvalAnswer" onclick="evaluateCurrentAnswer()">Evaluate Answer</button>
+            <button class="btn btn-secondary" id="btnNextQ" onclick="nextQuestion()">Next Question ➡</button>
+          </div>
+        </div>
+
+        <!-- Evaluation Feedback -->
+        <div id="evaluationCard" class="card" style="display: none; border-color: #2b3a4f;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="font-size: 17px; font-weight: 800;">AI Answer Feedback</h3>
+            <span class="badge badge-green" id="answerScoreBadge">Score: 0/100</span>
+          </div>
+          <p id="evalFeedbackText" style="font-size: 13px; color: var(--text-sub); margin-bottom: 14px; line-height: 1.5;"></p>
+          <div class="grid-2">
+            <div>
+              <h4 style="font-size: 13px; color: #34d399; margin-bottom: 6px;">✓ Strengths</h4>
+              <div id="evalStrengths"></div>
+            </div>
+            <div>
+              <h4 style="font-size: 13px; color: #f59e0b; margin-bottom: 6px;">• Areas to Improve</h4>
+              <div id="evalImprovements"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. JOB APPLICATIONS TAB -->
+    <section id="tab-jobs" class="view-panel">
+      <div class="card">
+        <h3 style="font-size: 18px; margin-bottom: 14px;">💼 Search Live Job Openings</h3>
+        <div class="grid-3">
+          <div class="form-group">
+            <label>Target Role</label>
+            <input type="text" id="jobSearchRole" placeholder="e.g. Software Engineer, Backend Developer">
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <select id="jobSearchLoc">
+              <option value="Remote">Remote</option>
+              <option value="Bengaluru, India">Bengaluru, India</option>
+              <option value="Hyderabad, India">Hyderabad, India</option>
+              <option value="Mumbai, India">Mumbai, India</option>
+              <option value="Delhi NCR, India">Delhi NCR, India</option>
+              <option value="Pune, India">Pune, India</option>
+              <option value="San Francisco, CA">San Francisco, CA</option>
+              <option value="New York, NY">New York, NY</option>
+              <option value="Worldwide">Worldwide</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Experience</label>
+            <select id="jobSearchExp">
+              <option value="Fresher / Entry Level">Fresher / Entry Level</option>
+              <option value="1-3 Years">1-3 Years</option>
+              <option value="3-5 Years">3-5 Years</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="searchJobs()">🔍 Find Job Openings</button>
+      </div>
+
+      <!-- One-click live platform searches -->
+      <div id="platformDirectLinks" class="card" style="padding: 14px 18px; background: #0f141f;"></div>
+
+      <!-- Job Openings List -->
+      <div id="jobOpeningsContainer"></div>
+    </section>
+
+    <!-- 5. FINAL REPORT TAB -->
+    <section id="tab-report" class="view-panel">
+      <div id="noReportPlaceholder" class="card" style="text-align: center; padding: 40px 20px;">
+        <div style="font-size: 38px; margin-bottom: 10px;">📋</div>
+        <h3 style="font-size: 18px; margin-bottom: 6px;">No Interview Completed Yet</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Practice your questions in the Interview Setup tab to generate your comprehensive performance report.</p>
+        <button class="btn btn-primary btn-sm" onclick="switchTab('interview')">Go to Interview Setup</button>
+      </div>
+
+      <div id="reportContentSection" style="display: none;">
+        <div class="card" style="background: linear-gradient(135deg, #111e36, #131822); border-color: #27374f;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <span class="badge badge-blue">INTERVIEW PERFORMANCE SCORECARD</span>
+              <h2 style="font-size: 26px; font-weight: 800; margin: 8px 0 4px 0;" id="reportCandidateTitle">Candidate Report</h2>
+              <p style="font-size: 13px; color: var(--text-sub);" id="reportRecommendation"></p>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-size: 42px; font-weight: 900; color: #34d399;" id="reportOverallScore">0%</div>
+              <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);" id="reportPerfLabel">OVERALL SCORE</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="font-size: 18px; margin-bottom: 16px;">Question-by-Question Evaluation</h3>
+          <div id="reportQuestionsList"></div>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button class="btn btn-primary" onclick="downloadReportTxt()">📥 Download Interview Report (.txt)</button>
+            <button class="btn btn-secondary" onclick="retakeInterview()">🔄 Practice Another Interview</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC & STATE PERSISTENCE -->
+  <script>
+    // App State Management with LocalStorage
+    const State = {
+      tab: 'dashboard',
+      resumeText: localStorage.getItem('resumeText') || '',
+      resumeName: localStorage.getItem('resumeName') || '',
+      jobDescription: localStorage.getItem('jobDescription') || '',
+      atsResult: JSON.parse(localStorage.getItem('atsResult') || 'null'),
+      candidateName: localStorage.getItem('candidateName') || '',
+      targetRole: localStorage.getItem('targetRole') || '',
+      roleRecs: JSON.parse(localStorage.getItem('roleRecs') || 'null'),
+      questions: JSON.parse(localStorage.getItem('questions') || '[]'),
+      answers: JSON.parse(localStorage.getItem('answers') || '[]'),
+      currentQuestionIdx: 0,
+      inInterview: false,
+      jobListings: JSON.parse(localStorage.getItem('jobListings') || '[]')
+    };
+
+    function saveState() {
+      localStorage.setItem('resumeText', State.resumeText);
+      localStorage.setItem('resumeName', State.resumeName);
+      localStorage.setItem('jobDescription', State.jobDescription);
+      localStorage.setItem('atsResult', JSON.stringify(State.atsResult));
+      localStorage.setItem('candidateName', State.candidateName);
+      localStorage.setItem('targetRole', State.targetRole);
+      localStorage.setItem('roleRecs', JSON.stringify(State.roleRecs));
+      localStorage.setItem('questions', JSON.stringify(State.questions));
+      localStorage.setItem('answers', JSON.stringify(State.answers));
+      localStorage.setItem('jobListings', JSON.stringify(State.jobListings));
+      updateDashboardStats();
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      State.tab = tabId;
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+
+      const btn = Array.from(document.querySelectorAll('.nav-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (btn) btn.classList.add('active');
+
+      const panel = document.getElementById(`tab-${tabId}`);
+      if (panel) panel.classList.add('active');
+
+      // Update titles
+      const titles = {
+        dashboard: { title: "Dashboard", sub: "Your AI-powered interview preparation & career workspace" },
+        resume: { title: "Resume & ATS Analysis", sub: "Analyze resume compatibility and optimize keywords for jobs" },
+        interview: { title: "Interview Setup & Practice", sub: "Detect suitable roles and practice personalized mock interviews" },
+        jobs: { title: "Job Applications & Openings", sub: "Curated job openings from Google Jobs, LinkedIn, Indeed & Glassdoor" },
+        report: { title: "Final Interview Report", sub: "Comprehensive performance metrics and personalized feedback" }
+      };
+      if (titles[tabId]) {
+        document.getElementById('pageTitle').innerText = titles[tabId].title;
+        document.getElementById('pageSub').innerText = titles[tabId].sub;
+      }
+
+      // Tab specific triggers
+      if (tabId === 'interview' && State.resumeText && !State.roleRecs) {
+        fetchRoleRecommendations();
+      }
+      if (tabId === 'jobs' && State.jobListings.length === 0) {
+        searchJobs();
+      }
+      if (tabId === 'report') {
+        renderFinalReport();
+      }
+    }
+
+    // Dashboard Stats
+    function updateDashboardStats() {
+      const atsScore = State.atsResult ? (State.atsResult.ats_score || 0) : 0;
+      document.getElementById('dashAtsScore').innerText = `${atsScore}%`;
+      document.getElementById('dashQuestionsCount').innerText = State.questions.length;
+      document.getElementById('dashAnswersCount').innerText = State.answers.length;
+
+      if (State.answers.length > 0) {
+        const scores = State.answers.map(a => a.evaluation ? a.evaluation.score || 70 : 70);
+        const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+        document.getElementById('dashOverallScore').innerText = `${avg}%`;
+      } else {
+        document.getElementById('dashOverallScore').innerText = '0%';
+      }
+    }
+
+    // File Upload Handler
+    async function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const status = document.getElementById('fileUploadStatus');
+      status.innerHTML = `<span class="spinner"></span> Reading ${file.name}...`;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const resp = await fetch('/api/extract-resume', { method: 'POST', body: formData });
+        const data = await resp.json();
+        if (data.text) {
+          State.resumeText = data.text;
+          State.resumeName = file.name;
+          State.atsResult = null;
+          State.roleRecs = null;
+          saveState();
+
+          status.innerHTML = `<span style="color:#34d399;">✓ Loaded: ${file.name}</span>`;
+          document.getElementById('resumeDetailsSection').style.display = 'block';
+          document.getElementById('resumeTextDisplay').value = data.text;
+        } else {
+          status.innerHTML = `<span style="color:#f87171;">Failed to extract text from file.</span>`;
+        }
+      } catch (err) {
+        status.innerHTML = `<span style="color:#f87171;">Error uploading: ${err.message}</span>`;
+      }
+    }
+
+    // ATS Analysis
+    async function analyzeATS() {
+      const btn = document.getElementById('btnAnalyzeATS');
+      btn.innerHTML = `<span class="spinner"></span> Analyzing ATS Score...`;
+      btn.disabled = true;
+
+      const resume = document.getElementById('resumeTextDisplay').value;
+      const jobDesc = document.getElementById('jobDescInput').value;
+      State.resumeText = resume;
+      State.jobDescription = jobDesc;
+      saveState();
+
+      try {
+        const resp = await fetch('/api/ats-analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume, job_description: jobDesc })
+        });
+        const data = await resp.json();
+        State.atsResult = data;
+        saveState();
+
+        document.getElementById('atsResultsCard').style.display = 'block';
+        document.getElementById('atsScoreValue').innerText = `${data.ats_score}%`;
+        document.getElementById('atsSummary').innerText = data.summary || '';
+        document.getElementById('mKeywords').innerText = `${data.keyword_score}%`;
+        document.getElementById('mSkills').innerText = `${data.skills_score}%`;
+        document.getElementById('mExp').innerText = `${data.experience_score}%`;
+        document.getElementById('mFormat').innerText = `${data.format_score}%`;
+
+        document.getElementById('atsStrengths').innerHTML = (data.strengths || []).map(s => `<div style="font-size:12px; margin-bottom:4px; color:#cbd5e1;">✓ ${s}</div>`).join('');
+        document.getElementById('atsMissing').innerHTML = (data.missing_keywords || []).map(k => `<div style="font-size:12px; margin-bottom:4px; color:#cbd5e1;">• ${k}</div>`).join('');
+      } catch (err) {
+        alert("ATS analysis failed: " + err.message);
+      } finally {
+        btn.innerHTML = `<span>⚡ Analyze ATS Score</span>`;
+        btn.disabled = false;
+      }
+    }
+
+    // Optimize Resume
+    async function optimizeResume() {
+      const btn = document.getElementById('btnOptimizeResume');
+      btn.innerHTML = `<span class="spinner"></span> Optimizing Resume...`;
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch('/api/optimize-resume', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume: State.resumeText, job_description: State.jobDescription })
+        });
+        const data = await resp.json();
+        document.getElementById('optimizedResumeSection').style.display = 'block';
+        document.getElementById('optimizedResumeText').value = data.optimized_resume || '';
+      } catch (err) {
+        alert("Optimization failed: " + err.message);
+      } finally {
+        btn.innerHTML = `✨ Auto Adjust Resume`;
+        btn.disabled = false;
+      }
+    }
+
+    function downloadOptimizedResume() {
+      const text = document.getElementById('optimizedResumeText').value;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'optimized_resume.txt';
+      a.click();
+    }
+
+    // Role Recommendations
+    async function fetchRoleRecommendations() {
+      const box = document.getElementById('suitableRolesBox');
+      box.style.display = 'block';
+      box.innerHTML = `<div class="card"><span class="spinner"></span> Analyzing your resume to find suitable job roles...</div>`;
+
+      try {
+        const resp = await fetch('/api/recommend-roles', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume: State.resumeText })
+        });
+        const data = await resp.json();
+        State.roleRecs = data;
+        if (data.primary_role && !State.targetRole) {
+          State.targetRole = data.primary_role;
+          document.getElementById('targetRoleInput').value = data.primary_role;
+        }
+        saveState();
+        renderRoleRecommendations();
+      } catch (err) {
+        box.innerHTML = `<div class="card" style="color:#f87171;">Failed to load role recommendations.</div>`;
+      }
+    }
+
+    function renderRoleRecommendations() {
+      const box = document.getElementById('suitableRolesBox');
+      const recs = State.roleRecs;
+      if (!recs) return;
+
+      const roles = recs.suitable_roles || [];
+      box.style.display = 'block';
+      box.innerHTML = `
+        <div class="card" style="border:1px solid #10b981; background:rgba(16,185,129,0.08); padding:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <span style="font-size:10px; font-weight:800; color:#34d399; letter-spacing:1px;">⭐ TOP RECOMMENDED ROLE FOR YOUR RESUME</span>
+              <h3 style="font-size:20px; font-weight:800; margin:4px 0;">${recs.primary_role}</h3>
+              <p style="font-size:13px; color:var(--text-sub);">${recs.primary_reason || ''}</p>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:28px; font-weight:900; color:#34d399;">${recs.primary_match_score || 95}%</div>
+              <div style="font-size:10px; color:var(--text-muted); font-weight:700;">MATCH SCORE</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4 style="font-size:15px; font-weight:800; margin-bottom:12px;">📋 All Suitable Roles (${roles.length} Identified)</h4>
+          <div class="grid-3">
+            ${roles.map((r, idx) => `
+              <div style="background:#0c111a; border:1px solid #1f2838; border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:space-between;">
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                    <span style="font-weight:700; font-size:14px;">${r.role}</span>
+                    <span class="badge badge-blue">${r.match_score}%</span>
+                  </div>
+                  <p style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">${r.why_suitable || ''}</p>
+                </div>
+                <div>
+                  <div style="margin-bottom:8px;">
+                    ${(r.matched_skills || []).map(s => `<span class="badge" style="background:#192334; color:#93c5fd; margin:2px;">${s}</span>`).join('')}
+                  </div>
+                  <button class="btn btn-secondary btn-sm btn-block" onclick="selectRole('${r.role}')">🎯 Select Role</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function selectRole(roleName) {
+      State.targetRole = roleName;
+      document.getElementById('targetRoleInput').value = roleName;
+      saveState();
+    }
+
+    // Questions Generation & Interview Flow
+    async function generateQuestionsOnly() {
+      const role = document.getElementById('targetRoleInput').value || State.targetRole || "Software Engineer";
+      const count = parseInt(document.getElementById('numQuestionsInput').value) || 5;
+      const type = document.getElementById('interviewTypeSelect').value;
+      const diff = document.getElementById('difficultySelect').value;
+
+      const container = document.getElementById('questionsPreviewList');
+      container.innerHTML = `<div class="card"><span class="spinner"></span> Generating ${count} personalized interview questions...</div>`;
+
+      try {
+        const resp = await fetch('/api/generate-questions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ resume: State.resumeText, role, number: count, interview_type: type, difficulty: diff })
+        });
+        const data = await resp.json();
+        State.questions = data.questions || [];
+        State.answers = [];
+        State.currentQuestionIdx = 0;
+        saveState();
+
+        container.innerHTML = `
+          <div class="card">
+            <h4 style="font-size:16px; margin-bottom:12px;">Generated Questions (${State.questions.length})</h4>
+            ${State.questions.map((q, idx) => `
+              <div style="background:#0e131d; padding:12px; border-radius:8px; margin-bottom:8px; border:1px solid #1c2637;">
+                <span class="badge badge-blue">Q${idx + 1} • ${q.category || 'Technical'}</span>
+                <p style="font-size:14px; font-weight:600; margin-top:6px;">${q.question}</p>
+              </div>
+            `).join('')}
+            <button class="btn btn-primary" style="margin-top:10px;" onclick="startInterviewNow()">🚀 Start Interview Now</button>
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = `<div class="card" style="color:#f87171;">Failed to generate questions: ${err.message}</div>`;
+      }
+    }
+
+    async function startInterviewNow() {
+      if (State.questions.length === 0) {
+        await generateQuestionsOnly();
+      }
+      State.inInterview = true;
+      State.currentQuestionIdx = 0;
+      document.getElementById('interviewSetupView').style.display = 'none';
+      document.getElementById('interviewPracticeView').style.display = 'block';
+      loadCurrentQuestion();
+    }
+
+    function exitInterviewToSetup() {
+      State.inInterview = false;
+      document.getElementById('interviewPracticeView').style.display = 'none';
+      document.getElementById('interviewSetupView').style.display = 'block';
+    }
+
+    function loadCurrentQuestion() {
+      const q = State.questions[State.currentQuestionIdx];
+      if (!q) return;
+
+      const total = State.questions.length;
+      const cur = State.currentQuestionIdx;
+
+      document.getElementById('interviewProgressBar').style.width = `${((cur + 1) / total) * 100}%`;
+      document.getElementById('questionCounter').innerText = `Question ${cur + 1} of ${total}`;
+      document.getElementById('currentQuestionNum').innerText = `QUESTION ${cur + 1} • ${(q.category || 'TECHNICAL').toUpperCase()}`;
+      document.getElementById('currentQuestionText').innerText = q.question;
+
+      // Auto read aloud with Web Speech API
+      speakCurrentQuestion();
+
+      // Load existing answer if any
+      const existing = State.answers.find(a => a.index === cur);
+      document.getElementById('candidateAnswerText').value = existing ? existing.answer : '';
+
+      document.getElementById('btnPrevQ').disabled = (cur === 0);
+      document.getElementById('btnNextQ').innerText = (cur >= total - 1) ? 'Finish & View Report 🏁' : 'Next Question ➡';
+
+      // Check if evaluated
+      if (existing && existing.evaluation) {
+        showEvaluation(existing.evaluation);
+      } else {
+        document.getElementById('evaluationCard').style.display = 'none';
+      }
+    }
+
+    function speakCurrentQuestion() {
+      const q = State.questions[State.currentQuestionIdx];
+      if (!q || !('speechSynthesis' in window)) return;
+
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(q.question);
+      u.rate = 0.95;
+      const status = document.getElementById('speechIndicator');
+      status.innerText = '🔊 Speaking...';
+      u.onend = () => status.innerText = '';
+      u.onerror = () => status.innerText = '';
+      window.speechSynthesis.speak(u);
+    }
+
+    // Voice Recording (MediaRecorder)
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+
+    async function toggleVoiceRecording() {
+      const btn = document.getElementById('btnRecordVoice');
+      const status = document.getElementById('recStatus');
+
+      if (!isRecording) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorder = new MediaRecorder(stream);
+          audioChunks = [];
+          mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+          mediaRecorder.onstop = () => {
+            status.innerText = 'Transcribing voice input...';
+            // Use browser SpeechRecognition or fallback
+            simulateOrTranscribeVoice();
+          };
+          mediaRecorder.start();
+          isRecording = true;
+          btn.innerText = '⏹️ Stop Recording';
+          btn.classList.add('btn-primary');
+          status.innerText = 'Recording in progress...';
+        } catch (err) {
+          alert("Microphone access denied or not supported.");
+        }
+      } else {
+        mediaRecorder.stop();
+        isRecording = false;
+        btn.innerText = '🎤 Record Voice Answer';
+        btn.classList.remove('btn-primary');
+      }
+    }
+
+    function simulateOrTranscribeVoice() {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const rec = new SpeechRec();
+        rec.continuous = false;
+        rec.onresult = e => {
+          const text = e.results[0][0].transcript;
+          document.getElementById('candidateAnswerText').value = text;
+          document.getElementById('recStatus').innerText = '✓ Voice transcribed!';
+        };
+        rec.start();
+      } else {
+        document.getElementById('recStatus').innerText = 'Audio recorded. (Voice ready)';
+      }
+    }
+
+    async function evaluateCurrentAnswer() {
+      const ans = document.getElementById('candidateAnswerText').value.trim();
+      if (!ans) { alert("Please type or record an answer first."); return; }
+
+      const q = State.questions[State.currentQuestionIdx];
+      const btn = document.getElementById('btnEvalAnswer');
+      btn.innerHTML = `<span class="spinner"></span> Evaluating...`;
+      btn.disabled = true;
+
+      try {
+        const resp = await fetch('/api/evaluate-answer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ question: q.question, answer: ans, resume: State.resumeText })
+        });
+        const evalData = await resp.json();
+
+        State.answers = State.answers.filter(a => a.index !== State.currentQuestionIdx);
+        State.answers.push({ index: State.currentQuestionIdx, question: q.question, answer: ans, evaluation: evalData });
+        saveState();
+        showEvaluation(evalData);
+      } catch (err) {
+        alert("Evaluation failed: " + err.message);
+      } finally {
+        btn.innerText = "Evaluate Answer";
+        btn.disabled = false;
+      }
+    }
+
+    function showEvaluation(evalData) {
+      const card = document.getElementById('evaluationCard');
+      card.style.display = 'block';
+      document.getElementById('answerScoreBadge').innerText = `Score: ${evalData.score || 70}/100`;
+      document.getElementById('evalFeedbackText').innerText = evalData.feedback || '';
+      document.getElementById('evalStrengths').innerHTML = (evalData.strengths || []).map(s => `<div style="font-size:12px; margin-bottom:2px;">✓ ${s}</div>`).join('');
+      document.getElementById('evalImprovements').innerHTML = (evalData.improvements || []).map(i => `<div style="font-size:12px; margin-bottom:2px;">• ${i}</div>`).join('');
+    }
+
+    function prevQuestion() {
+      if (State.currentQuestionIdx > 0) {
+        State.currentQuestionIdx--;
+        loadCurrentQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (State.currentQuestionIdx < State.questions.length - 1) {
+        State.currentQuestionIdx++;
+        loadCurrentQuestion();
+      } else {
+        // Finish & Go to Report
+        switchTab('report');
+      }
+    }
+
+    // Job Search & Applications
+    async function searchJobs() {
+      const role = document.getElementById('jobSearchRole').value || State.targetRole || "Software Engineer";
+      const loc = document.getElementById('jobSearchLoc').value || "Remote";
+      const exp = document.getElementById('jobSearchExp').value || "Fresher / Entry Level";
+
+      // Build direct links bar
+      const qEnc = encodeURIComponent(`${role} jobs ${loc}`);
+      document.getElementById('platformDirectLinks').innerHTML = `
+        <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:8px;">🌐 DIRECT PLATFORM SEARCHES FOR '${role}'</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">
+          <a class="btn btn-secondary btn-sm" href="https://www.google.com/search?q=${qEnc}&ibp=htl;jobs" target="_blank">🔍 Google for Jobs ↗</a>
+          <a class="btn btn-secondary btn-sm" href="https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(role)}&location=${encodeURIComponent(loc)}" target="_blank">💼 LinkedIn Jobs ↗</a>
+          <a class="btn btn-secondary btn-sm" href="https://www.indeed.com/jobs?q=${encodeURIComponent(role)}&l=${encodeURIComponent(loc)}" target="_blank">📄 Indeed ↗</a>
+          <a class="btn btn-secondary btn-sm" href="https://wellfound.com/jobs?role=${encodeURIComponent(role)}" target="_blank">🚀 Wellfound ↗</a>
+        </div>
+      `;
+
+      const container = document.getElementById('jobOpeningsContainer');
+      container.innerHTML = `<div class="card"><span class="spinner"></span> Curating active job openings from Google, LinkedIn, Indeed & Glassdoor...</div>`;
+
+      try {
+        const resp = await fetch('/api/search-jobs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role, location: loc, experience: exp, resume: State.resumeText })
+        });
+        const data = await resp.json();
+        State.jobListings = data.jobs || [];
+        saveState();
+        renderJobListings();
+      } catch (err) {
+        container.innerHTML = `<div class="card" style="color:#f87171;">Failed to fetch jobs: ${err.message}</div>`;
+      }
+    }
+
+    function renderJobListings() {
+      const container = document.getElementById('jobOpeningsContainer');
+      const jobs = State.jobListings;
+
+      if (!jobs || jobs.length === 0) {
+        container.innerHTML = `<div class="card">No job openings found. Try searching with another keyword.</div>`;
+        return;
+      }
+
+      container.innerHTML = jobs.map((j, idx) => `
+        <div class="card" style="margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span class="badge badge-blue">${j.platform}</span>
+                <span style="font-size:12px; color:var(--text-muted);">${j.posted_date || 'Recently'}</span>
+              </div>
+              <h3 style="font-size:18px; font-weight:800; margin-bottom:2px;">${j.title}</h3>
+              <p style="font-size:13px; color:#60a5fa;">🏢 ${j.company} <span style="color:var(--text-muted); font-weight:400;">| 📍 ${j.location} | 💰 ${j.salary_range}</span></p>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:24px; font-weight:900; color:#34d399;">${j.match_score || 90}%</div>
+              <div style="font-size:10px; color:var(--text-muted); font-weight:700;">ATS MATCH</div>
+            </div>
+          </div>
+
+          <p style="font-size:13px; color:var(--text-sub); margin:12px 0; line-height:1.5;">${j.overview || ''}</p>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;">
+            <button class="btn btn-secondary btn-sm" onclick="toggleJobDetails('${j.id || idx}')">👁 Option 1: View Website & Job Profile</button>
+            <a class="btn btn-primary btn-sm" href="${j.apply_url}" target="_blank">🚀 Option 2: Apply for Job ↗</a>
+            <button class="btn btn-secondary btn-sm" onclick="generatePitch('${j.title}', '${j.company}', '${j.id || idx}')">📝 Quick Pitch</button>
+          </div>
+
+          <!-- Expanded Details -->
+          <div id="job-details-${j.id || idx}" style="display:none; margin-top:16px; padding-top:14px; border-top:1px solid #1e2633;">
+            <div style="margin-bottom:10px;">
+              <strong style="font-size:13px; color:#60a5fa;">About ${j.company}:</strong>
+              <div style="margin-top:4px;"><a class="btn btn-secondary btn-sm" href="${j.company_website}" target="_blank">🌐 Open Official Company Website</a></div>
+            </div>
+            <div style="margin-bottom:10px;">
+              <strong style="font-size:13px; color:#60a5fa;">Key Responsibilities:</strong>
+              <ul style="font-size:13px; color:var(--text-sub); padding-left:18px; margin-top:4px;">
+                ${(j.key_responsibilities || []).map(r => `<li>${r}</li>`).join('')}
+              </ul>
+            </div>
+            <div style="margin-bottom:10px;">
+              <strong style="font-size:13px; color:#60a5fa;">Requirements & Qualifications:</strong>
+              <ul style="font-size:13px; color:var(--text-sub); padding-left:18px; margin-top:4px;">
+                ${(j.requirements || []).map(r => `<li>${r}</li>`).join('')}
+              </ul>
+            </div>
+            <a class="btn btn-primary btn-sm" href="${j.apply_url}" target="_blank">🚀 Apply for this Job on ${j.platform}</a>
+          </div>
+
+          <div id="job-pitch-${j.id || idx}" style="display:none; margin-top:14px;" class="alert alert-info"></div>
+        </div>
+      `).join('');
+    }
+
+    function toggleJobDetails(id) {
+      const el = document.getElementById(`job-details-${id}`);
+      if (el) el.style.display = (el.style.display === 'none' ? 'block' : 'none');
+    }
+
+    async function generatePitch(title, company, id) {
+      const pitchBox = document.getElementById(`job-pitch-${id}`);
+      pitchBox.style.display = 'block';
+      pitchBox.innerHTML = `<span class="spinner"></span> Generating tailored cover letter pitch...`;
+
+      try {
+        const resp = await fetch('/api/generate-pitch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, company, resume: State.resumeText })
+        });
+        const data = await resp.json();
+        pitchBox.innerHTML = `<strong>Tailored Pitch for ${company}:</strong><br><br>${data.pitch || ''}`;
+      } catch (err) {
+        pitchBox.innerHTML = `Failed to generate pitch.`;
+      }
+    }
+
+    // Final Report
+    async function renderFinalReport() {
+      if (State.answers.length === 0) {
+        document.getElementById('noReportPlaceholder').style.display = 'block';
+        document.getElementById('reportContentSection').style.display = 'none';
+        return;
+      }
+
+      document.getElementById('noReportPlaceholder').style.display = 'none';
+      document.getElementById('reportContentSection').style.display = 'block';
+
+      try {
+        const resp = await fetch('/api/final-report', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers: State.answers })
+        });
+        const report = await resp.json();
+
+        document.getElementById('reportCandidateTitle').innerText = `${State.candidateName || 'Candidate'} - ${State.targetRole || 'Interview Report'}`;
+        document.getElementById('reportRecommendation').innerText = report.recommendation || '';
+        document.getElementById('reportOverallScore').innerText = `${report.overall_score || 0}%`;
+        document.getElementById('reportPerfLabel').innerText = `PERFORMANCE: ${(report.performance || 'Good').toUpperCase()}`;
+
+        document.getElementById('reportQuestionsList').innerHTML = State.answers.map((a, idx) => `
+          <div style="background:#0c111a; border:1px solid #1f2838; border-radius:10px; padding:16px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <strong>Question ${idx + 1}: ${a.question}</strong>
+              <span class="badge badge-green">Score: ${a.evaluation ? a.evaluation.score : 70}/100</span>
+            </div>
+            <p style="font-size:13px; color:var(--text-sub); margin-bottom:8px;"><em>Your Answer:</em> ${a.answer}</p>
+            <p style="font-size:12px; color:#93c5fd;"><strong>Feedback:</strong> ${a.evaluation ? a.evaluation.feedback : ''}</p>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function downloadReportTxt() {
+      let reportText = `INTERVIEWAI - FINAL INTERVIEW REPORT\n`;
+      reportText += `Candidate: ${State.candidateName || 'Candidate'}\n`;
+      reportText += `Target Role: ${State.targetRole || 'Software Engineer'}\n\n`;
+      State.answers.forEach((a, i) => {
+        reportText += `----------------------------------------\n`;
+        reportText += `Question ${i + 1}: ${a.question}\n`;
+        reportText += `Answer: ${a.answer}\n`;
+        reportText += `Score: ${a.evaluation ? a.evaluation.score : 70}/100\n`;
+        reportText += `Feedback: ${a.evaluation ? a.evaluation.feedback : ''}\n\n`;
+      });
+
+      const blob = new Blob([reportText], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'InterviewAI_Report.txt';
+      a.click();
+    }
+
+    function retakeInterview() {
+      State.answers = [];
+      State.currentQuestionIdx = 0;
+      saveState();
+      switchTab('interview');
+    }
+
+    // Init on load
+    window.addEventListener('DOMContentLoaded', () => {
+      if (State.resumeText) {
+        document.getElementById('resumeDetailsSection').style.display = 'block';
+        document.getElementById('resumeTextDisplay').value = State.resumeText;
+      }
+      if (State.targetRole) {
+        document.getElementById('targetRoleInput').value = State.targetRole;
+      }
+      if (State.candidateName) {
+        document.getElementById('candidateNameInput').value = State.candidateName;
+      }
+      updateDashboardStats();
+    });
+  </script>
+</body>
+</html>
