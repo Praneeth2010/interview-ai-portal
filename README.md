@@ -75,36 +75,24 @@ Open **[http://localhost:8000](http://localhost:8000)** in your browser.
 
 ### Option A: 1-Click Deploy via GitHub (Recommended)
 
-1. Push this folder to a GitHub repository:
-   ```bash
-   cd c:\IntAss\vercel_app
-   git init -b main
-   git add .
-   git commit -m "Initial commit for Vercel deployment"
-   # Create a repo on github.com, then:
-   git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-   git push -u origin main
-   ```
-2. Go to **[vercel.com/new](https://vercel.com/new)** and import your GitHub repository.
-3. In **Settings -> Environment Variables**, add:
+1. The repository is already created and pushed at:
+   **[https://github.com/Praneeth2010/interview-ai-portal](https://github.com/Praneeth2010/interview-ai-portal)**
+2. Go to **[vercel.com/new](https://vercel.com/new)** and log in with your email `praneeth20102005@gmail.com` (or GitHub `Praneeth2010`).
+3. Click **Import** next to `interview-ai-portal`.
+4. In **Settings -> Environment Variables**, add:
    - Key: `GEMINI_API_KEY`
-   - Value: `your-gemini-api-key`
-4. Click **Deploy**. Vercel will give you a permanent URL:
-   `https://<your-project-name>.vercel.app`
+   - Value: `YOUR_GEMINI_API_KEY` (from your Google AI Studio or secrets.toml)
+5. Click **Deploy**. Vercel will give you your permanent URL:
+   `https://interview-ai-portal.vercel.app`
 
 ### Option B: Deploy via Vercel CLI
 
-1. Run the Vercel CLI from inside `vercel_app`:
+1. Run the Vercel login using your email:
+   ```bash
+   vercel login praneeth20102005@gmail.com
+   ```
+2. Deploy to production:
    ```bash
    cd c:\IntAss\vercel_app
-   npx vercel
-   ```
-2. Follow the terminal prompts (Login, Select Scope, Link to Project).
-3. To deploy to production:
-   ```bash
-   npx vercel --prod
-   ```
-4. Set the environment variable in Vercel:
-   ```bash
-   npx vercel env add GEMINI_API_KEY
+   vercel --prod
    ```
